@@ -1,57 +1,78 @@
 import Expo, { SQLite } from 'expo';
 import React from 'react';
 import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
+    StyleSheet,
+    Text,
+    View,
+    TouchableOpacity,
+    ListView,
+    FlatList,
 } from 'react-native';
+import { List, ListItem } from 'react-native-elements'
 
-const db = SQLite.openDatabase({ name: 'db.db' });
+const db = SQLite.openDatabase({ name: 'folders.db' });
 
-class Items extends React.Component {
-  state = {
-    items: null,
-  };
+class Folders extends React.Component {
+    state = {
+        folders: null
+    };
 
-  componentDidMount() {
-    this.update();
-  }
-
-  render() {
-    const { items } = this.state;
-    if (items === null || items.length === 0) {
-      return null;
+    constructor() {
+        super();
+        this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     }
 
-    return (
-      <View style={{ margin: 5 }}>
-        {items.map(({ id, done, value }) => (
-          <TouchableOpacity
-            key={id}
-            onPress={() => this.props.onPressItem && this.props.onPressItem(id)}
-            style={{
-              padding: 5,
-              backgroundColor: done ? '#aaffaa' : 'white',
-              borderColor: 'black',
-              borderWidth: 1,
-            }}>
-            <Text>{value}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-    );
-  }
+    componentDidMount() {
+        this.update();
+    }
 
-  update() {
-    db.transaction(tx => {
-      tx.executeSql(
-        `select * from items where done = ?;`,
-        [this.props.done ? 1 : 0],
-        (_, { rows: { _array } }) => this.setState({ items: _array })
-      );
-    });
-  }
+    _renderItem = ({ item }) => (
+        <ListItem
+            key={item.id}
+            title={item.title}
+        />
+    );
+
+
+    render() {
+        const { folders } = this.state;
+        if (folders === null || folders.length === 0) {
+            return null;
+        }
+
+        return (
+            <View style={styles.container}>
+                <List containerStyle={{ marginBottom: 20 }}>
+                    {
+                        folders.map((item, id) => (
+                            <ListItem
+                                key={id}
+                                title={item.title}
+                            />
+                        ))
+                    }
+                </List>
+            </View>
+        );
+    }
+
+    update() {
+        db.transaction(tx => {
+            tx.executeSql(
+                `select * from folders;`,
+                null,
+                (_, { rows: { _array } }) => this.setState({ folders: _array })
+            );
+        });
+    }
 }
 
-export { db, Items };
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+        paddingTop: Expo.Constants.statusBarHeight,
+    }
+});
+
+export { db, Folders };

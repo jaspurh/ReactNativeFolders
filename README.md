@@ -1,1 +1,1 @@
-This is a basic React Native projkect, that will display some content of folders, while also testing basic funtionalities such as navigators
+This is a basic React Native project, that will display some content of folders, while also testing basic funtionalities such as navigators

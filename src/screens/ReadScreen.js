@@ -8,31 +8,47 @@ import {
     Button
 } from 'react-native'
 
+import { db, Folders } from '../data/sqlite'
+
 class ReadScreen extends React.Component {
-    static navigationOptions = {
-        title: 'Content',
+    state = {
+        text: null,
     };
 
-    render() {
-        const { navigate } = this.props.navigation;
+    componentDidMount() {
+        db.transaction(tx => {
+            tx.executeSql(
+                'create table if not exists folders (id integer primary key not null, title text not null);'
+            );
+        });
+    }
 
+    render() {
         return (
             <View style={styles.container}>
-                        <View style={[styles.conentContainer, styles.readBanner]}>
-                            <Text>Banner Text</Text>
-                        </View>
-                        <View style={[styles.conentContainer, styles.readHeader]}>
-                            <Text>Header 1</Text>
-                        </View>
-                        <View style={[styles.conentContainer, styles.readList]}>
-                            <Button
-                                title="Go To text"
-                                onPress={() => navigate('TextSc', {})}
-                            />
-                        </View>
-          </View>
+                <View style={{ flex: 1, backgroundColor: 'gray' }}>
+                    <Folders />
+                </View>
+            </View>
         );
     }
+
+    add(text) {
+        db.transaction(
+            tx => {
+                tx.executeSql('insert into folders (title) values (?)', [text]);
+                tx.executeSql('select * from folders', [], (_, { rows }) =>
+                    console.log(JSON.stringify(rows))
+                );
+            },
+            null,
+            this.update
+        );
+    }
+
+    update = () => {
+        this.folders && this.folders.update();
+    };
 }
             
         
@@ -42,14 +58,12 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         backgroundColor: '#fff',
         alignItems: 'stretch',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        paddingTop: Expo.Constants.statusBarHeight,
     },
     readContainer: {
         flex: 1,
         paddingTop: 30
-    },
-    readContainer: {
-        flex: 1
     },
     readBanner: {
         flex: 3,
