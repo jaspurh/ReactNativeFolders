@@ -6,49 +6,28 @@ import {
     ScrollView,
     Image,
     Button
-} from 'react-native'
-
-import { db, Folders } from '../data/sqlite'
+} from 'react-native';
+import { db } from '../data/sqlite';
+import { Folders } from '../components';
 
 class ReadScreen extends React.Component {
     state = {
         text: null,
     };
-
-    componentDidMount() {
-        db.transaction(tx => {
-            tx.executeSql(
-                'create table if not exists folders (id integer primary key not null, title text not null);'
-            );
-        });
-    }
+    
+    static navigationOptions = {
+        title: 'Heftir',
+    };
 
     render() {
         return (
             <View style={styles.container}>
-                <View style={{ flex: 1, backgroundColor: 'gray' }}>
-                    <Folders />
+                <View style={styles.readContainer}>
+                    <Folders navigation={this.props.navigation}/>
                 </View>
             </View>
         );
     }
-
-    add(text) {
-        db.transaction(
-            tx => {
-                tx.executeSql('insert into folders (title) values (?)', [text]);
-                tx.executeSql('select * from folders', [], (_, { rows }) =>
-                    console.log(JSON.stringify(rows))
-                );
-            },
-            null,
-            this.update
-        );
-    }
-
-    update = () => {
-        this.folders && this.folders.update();
-    };
 }
             
         
@@ -59,24 +38,11 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         alignItems: 'stretch',
         justifyContent: 'center',
-        paddingTop: Expo.Constants.statusBarHeight,
     },
     readContainer: {
         flex: 1,
-        paddingTop: 30
+        backgroundColor: '#F8C471'
     },
-    readBanner: {
-        flex: 3,
-        backgroundColor: '#FAE5D3',
-    },
-    readHeader: {
-        flex: 1,
-        backgroundColor: '#FEF5E7',
-    },
-    readList: {
-        flex: 5,
-        backgroundColor: '#F8C471',
-    }
 })
 
 export { ReadScreen };

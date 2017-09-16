@@ -8,22 +8,11 @@ import { Icon } from 'react-native-elements'
 import { 
     HomeScreen, 
     ReadScreen, 
-    ExploreScreen, 
-    TextScreen, 
+    ExploreScreen,
     ProfileScreen, 
     MoreScreen
 } from '../screens';
-
-export const ContentStack = StackNavigator(
-    {
-        ContentSc: {
-            screen: ReadScreen
-        },
-        TextSc: {
-            screen: TextScreen,
-        },
-    }
-)
+import { FolderStack } from './FolderStackNavigator';
 
 export const Tabs = TabNavigator(
     {
@@ -36,7 +25,7 @@ export const Tabs = TabNavigator(
             },
         },
         Read: {
-            screen: ReadScreen,
+            screen: FolderStack,
             navigationOptions: {
                 header: null,
                 tabBarLabel: "Les",
