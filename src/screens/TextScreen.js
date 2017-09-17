@@ -5,13 +5,14 @@ import {
     Text,
     ScrollView
 } from 'react-native'
+import { FolderText } from '../components';
 
 class TextScreen extends React.Component {
     render() {
         return (
             <View style={styles.container}>
                 <ScrollView style={styles.conetnContainer}>
-                    <Text>Text</Text>
+                    <FolderText text_id={this.props.navigation.state.params.text_id} />
                 </ScrollView>
             </View>
         );
